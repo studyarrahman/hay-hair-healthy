@@ -7,7 +7,7 @@ const secretManagerClient = new SecretManagerServiceClient();
 
 async function getSecret(secretName) {
   const [version] = await secretManagerClient.accessSecretVersion({
-    name: `projects/hay-hair-beauty/secrets/${secretName}/versions/latest`,
+    name: `projects/${process.env.GCLOUD_PROJECT_ID}/secrets/${secretName}/versions/latest`,
   });
 
   const payload = version.payload.data.toString('utf8');
