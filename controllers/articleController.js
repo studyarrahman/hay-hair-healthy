@@ -101,24 +101,16 @@ const searchArticles = async (req, res) => {
   const page = req.query.page ? parseInt(req.query.page) : 1;
   const limit = req.query.limit ? parseInt(req.query.limit) : 20;
 
-  try {
-    if (!title || title.trim() === '') {
-      // If title is not provided or is empty, get all articles
-      const { articles, currentPage, totalPages, totalItems, itemsPerPage } = await ArticleService.getAllArticles(page, limit);
-      return res.json({
-        data: articles,
-        currentPage,
-        totalPages,
-        totalItems,
-        itemsPerPage
-      });
-    }
+  if (!title) {
+    return res.status(400).json({ error: 'Title is required for search' });
+  }
 
+  try {
     const lowerCaseTitle = title.toLowerCase();
     console.log('Received search request for title:', lowerCaseTitle);
-
+    
     const { articles, currentPage, totalPages, totalItems, itemsPerPage } = await ArticleService.searchArticlesByTitle(lowerCaseTitle, page, limit);
-
+    
     if (articles.length === 0) {
       return res.status(404).json({ message: 'Data tidak ditemukan' });
     }
@@ -143,7 +135,6 @@ const searchArticles = async (req, res) => {
     res.status(500).json({ error: 'Failed to search articles' });
   }
 };
-
 
 
 
